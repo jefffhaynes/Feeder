@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+			 x:Class="KittyFeeder.MainPage">
+	<ContentPage.Content>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<Button Grid.Row="0" Text="Add meal" Command="{Binding AddMealCommand}"/>
+
+			<ListView Grid.Row="1" ItemsSource="{Binding ScheduleEntries}">
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<ViewCell>
+							<ViewCell.View>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="Auto"/>
+									</Grid.ColumnDefinitions>
+
+									<Picker>
+										<Picker.Items>
+										   	<x:String>Sunday</x:String> 
+            								<x:String>Monday</x:String>
+            								<x:String>Tuesday</x:String>
+            								<x:String>Wednesday</x:String>
+            								<x:String>Thursday</x:String>
+            								<x:String>Friday</x:String>
+            								<x:String>Saturday</x:String>
+										</Picker.Items>
+									</Picker>
+
+									<TimePicker Grid.Column="1"/>
+								</Grid>
+							</ViewCell.View>
+						</ViewCell>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+			<Button Grid.Row="2" Text="Feed now!" Command="{Binding RunCommand}"/>
+		</Grid>
+	</ContentPage.Content>
+</ContentPage>
