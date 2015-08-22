@@ -18,13 +18,15 @@ namespace KittyFeeder
 		{
 			_feeder = feeder;
 
+			ScheduleEntries = new NotifyTaskCompletion<ObservableCollection<ScheduleEntryViewModel>> (GetSchedule ());
+
 			RunCommand = new RelayCommand (o => _feeder.Feed ());
 
 			AddMealCommand = new RelayCommand (o => {
-				ScheduleEntries.Add (new ScheduleEntryViewModel ());
+				ScheduleEntries.Result.Add (new ScheduleEntryViewModel ());
 			});
 
-			CommitScheduleCommand = new RelayCommand (async o => await SetSchedule ());
+			CommitScheduleCommand = new RelayCommand (async o => await SetSchedule (ScheduleEntries.Result));
 		}
 
 		public ICommand RunCommand { get; set; }
@@ -33,29 +35,20 @@ namespace KittyFeeder
 
 		public ICommand CommitScheduleCommand { get; set; }
 
-		public NotifyTaskCompletion<ObservableCollection<ScheduleEntryViewModel>> ScheduleEntries 
-		{
-			get
-			{
-				GetSchedule();
-				return _schedule;
-			}
+		public NotifyTaskCompletion<ObservableCollection<ScheduleEntryViewModel>> ScheduleEntries { get; private set; }
 
-			set { _schedule = value; }
-		}
-
-		private async Task SetSchedule()
+		private async Task SetSchedule(IList<ScheduleEntryViewModel> schedule)
 		{
-			
-			var scheduleEntries = ScheduleEntries.Select (entry => new WeeklyScheduleEntryModel (Convert(entry.DayOfWeek), entry.Time)).Cast<ScheduleEntryModel>();
+			var scheduleEntries = schedule.Select (entry => new WeeklyScheduleEntryModel (Convert(entry.DayOfWeek), entry.Time)).Cast<ScheduleEntryModel>();
 			await _feeder.SetSchedule (new ScheduleModel{ Entries = scheduleEntries.ToList () });
 		}
 
-		private async Task<IList<ScheduleEntryModel>> GetSchedule()
+		private async Task<ObservableCollection<ScheduleEntryViewModel>> GetSchedule()
 		{
 			var schedule = await _feeder.GetSchedule ();
-			return schedule.Entries.OfType<WeeklyScheduleEntryModel> ()
+			var convertedSchedule = schedule.Entries.OfType<WeeklyScheduleEntryModel> ()
 				.Select (entry => new ScheduleEntryViewModel (Convert (entry.DayOfWeek), entry.Time)).ToList ();
+			return new ObservableCollection<ScheduleEntryViewModel> (convertedSchedule);
 		}
 
 		private ScheduleEntryDayOfWeek Convert(DayOfWeek dayOfWeek)
