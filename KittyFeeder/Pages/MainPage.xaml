@@ -1,18 +1,27 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
 			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+			 xmlns:controls="clr-namespace:KittyFeeder.Controls;assembly=KittyFeeder"
+			 xmlns:converters="clr-namespace:KittyFeeder.Converters;assembly=KittyFeeder"
 			 x:Class="KittyFeeder.MainPage">
+	<ContentPage.Resources>
+	    <ResourceDictionary>
+		    <converters:DayOfWeekConverter x:Key="DayOfWeekConverter"/>
+	    </ResourceDictionary>
+	</ContentPage.Resources>
 	<ContentPage.Content>
 		<Grid>
 			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="Auto"/>
 				<RowDefinition Height="*"/>
 				<RowDefinition Height="Auto"/>
 			</Grid.RowDefinitions>
 
 			<Button Grid.Row="0" Text="Add meal" Command="{Binding AddMealCommand}"/>
+			<Button Grid.Row="1" Text="Save" Command="{Binding CommitScheduleCommand}"/>
 
-			<ListView Grid.Row="1" ItemsSource="{Binding ScheduleEntries}">
+			<ListView Grid.Row="2" ItemsSource="{Binding ScheduleEntries}">
 				<ListView.ItemTemplate>
 					<DataTemplate>
 						<ViewCell>
@@ -23,8 +32,8 @@
 										<ColumnDefinition Width="Auto"/>
 									</Grid.ColumnDefinitions>
 
-									<Picker>
-										<Picker.Items>
+									<controls:BindablePicker SelectedItem="{Binding DayOfWeek, Converter={StaticResource DayOfWeekConverter}, Mode=TwoWay}">
+										<controls:BindablePicker.Items>
 										   	<x:String>Sunday</x:String> 
             								<x:String>Monday</x:String>
             								<x:String>Tuesday</x:String>
@@ -32,17 +41,17 @@
             								<x:String>Thursday</x:String>
             								<x:String>Friday</x:String>
             								<x:String>Saturday</x:String>
-										</Picker.Items>
-									</Picker>
+										</controls:BindablePicker.Items>
+									</controls:BindablePicker>
 
-									<TimePicker Grid.Column="1"/>
+									<TimePicker Grid.Column="1" Time="{Binding Time}"/>
 								</Grid>
 							</ViewCell.View>
 						</ViewCell>
 					</DataTemplate>
 				</ListView.ItemTemplate>
 			</ListView>
-			<Button Grid.Row="2" Text="Feed now!" Command="{Binding RunCommand}"/>
+			<Button Grid.Row="3" Text="Feed now!" Command="{Binding RunCommand}"/>
 		</Grid>
 	</ContentPage.Content>
 </ContentPage>

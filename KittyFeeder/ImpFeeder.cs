@@ -22,6 +22,11 @@ namespace KittyFeeder
 			await Post (_url + "/feed", null);
 		}
 
+		public async Task SetSchedule(ScheduleModel schedule)
+		{
+			await Post (_url + "/schedule", schedule);
+		}
+
 		private async Task Post(string url, object o)
 		{
 			// Create an HTTP web request using the URL:

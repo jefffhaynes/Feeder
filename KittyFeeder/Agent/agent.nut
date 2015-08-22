@@ -1,26 +1,89 @@
 ﻿// Log the URLs we need
-server.log("Turn motor on: " + http.agenturl() + "?motor=1");
-//server.log("Turn motor off: " + http.agenturl() + "?motor=0");
+server.log("Feed: " + http.agenturl() + "/feed");
+server.log("Schedule: " + http.agenturl() + "/schedule");
  
- 
-function requestHandler(request, response) {
-  try {
+function requestHandler(request, response) 
+{
+  try 
+  {
     local path = request.path.tolower();
     
     if(path == "/feed")
-        device.send("motor", 1); 
+    {
+        device.send("feed", 1); 
+        response.send(200, "OK");
+    }
     else if(path == "/schedule")
     {
-        server.log(request.body);
-        var schedule = http.jsondecode(request.body);
+        local stored = server.load();
         
+        server.log(request.method);
+        
+        if(request.method == "POST")
+        {
+            server.log(request.body);
+            local schedule = http.jsondecode(request.body);
+            
+            persistent <- {};
+            
+            if(stored.len() != 0)
+                persistent = stored;
+                
+            persistent.schedule <- schedule;
+            
+            server.save(persistent);
+            updateDevice();
+            response.send(200, "OK");
+        } 
+        else if(request.method == "GET")
+        {
+            schedule <- {};
+            
+            if(stored.len() != 0)
+                schedule = stored.schedule;
+                
+            local responseBody = http.jsonencode(schedule);
+            response.send(200, responseBody);
+        }
     }
-    // send a response back saying everything was OK.
-    response.send(200, "OK");
-  } catch (ex) {
+  } 
+  catch (ex) 
+  {        
     response.send(500, "Internal Server Error: " + ex);
   }
 }
+
+function updateDevice()
+{
+    local persistent = server.load();
+    
+    if(persistent.len() != 0)
+        device.send("state", persistent);
+}
+
+function onDeviceStatus(status)
+{
+    server.log("feed @ " + status.lastFeed);
+    
+    persistent <- {};
+    
+    local stored = server.load();
+    if(stored.len() != 0)
+        persistent = stored;
+            
+    persistent.lastFeed <- status.lastFeed;
+        
+    server.save(persistent);
+    
+    updateDevice();
+}
  
+device.onconnect(updateDevice);
+
+device.on("status", onDeviceStatus)
+
 // register the HTTP handler
 http.onrequest(requestHandler);
+
+
+

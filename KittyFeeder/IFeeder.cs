@@ -6,6 +6,7 @@ namespace KittyFeeder
 	public interface IFeeder
 	{
 		Task Feed();
+		Task SetSchedule (ScheduleModel schedule);
 	}
 }
 

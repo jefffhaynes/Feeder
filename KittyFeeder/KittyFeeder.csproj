@@ -70,6 +70,21 @@
     <Reference Include="Xamarin.Android.Support.v4">
       <HintPath>..\packages\Xamarin.Android.Support.v4.22.2.1.0\lib\MonoAndroid403\Xamarin.Android.Support.v4.dll</HintPath>
     </Reference>
+    <Reference Include="AndroidSwitchBackport">
+      <HintPath>..\Components\betterpickers-1.6.0.0\lib\android\AndroidSwitchBackport.dll</HintPath>
+    </Reference>
+    <Reference Include="BetterPickers">
+      <HintPath>..\Components\betterpickers-1.6.0.0\lib\android\BetterPickers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Linq.Expressions">
+      <HintPath>..\..\..\..\..\..\Program Files %28x86%29\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\Facades\System.Linq.Expressions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Linq">
+      <HintPath>..\..\..\..\..\..\Program Files %28x86%29\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\Facades\System.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Globalization">
+      <HintPath>..\..\..\..\..\..\Program Files %28x86%29\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5.2\Facades\System.Globalization.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
@@ -86,6 +101,14 @@
     <Compile Include="Models\ScheduleModel.cs" />
     <Compile Include="Models\ScheduleEntryModel.cs" />
     <Compile Include="ViewModels\ScheduleEntryViewModel.cs" />
+    <Compile Include="Models\ScheduleEntryType.cs" />
+    <Compile Include="Models\ScheduleEntryDayOfWeek.cs" />
+    <Compile Include="Models\WeeklyScheduleEntryModel.cs" />
+    <Compile Include="Models\OneTimeScheduleEntryModel.cs" />
+    <Compile Include="Models\DailyScheduleEntryModel.cs" />
+    <Compile Include="Models\DailyScheduleEntryModelBase.cs" />
+    <Compile Include="Controls\BindablePicker.cs" />
+    <Compile Include="Converters\DayOfWeekConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
@@ -102,10 +125,16 @@
     <Folder Include="Controls\" />
     <Folder Include="Agent\" />
     <Folder Include="Device\" />
+    <Folder Include="Resources\" />
+    <Folder Include="Resources\drawable\" />
+    <Folder Include="Converters\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\MainPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\icon.png" />
   </ItemGroup>
 </Project>

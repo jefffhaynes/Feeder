@@ -1,98 +1,52 @@
 ﻿
-// These constants may be different for your servo
  
-const SERVO_MIN = 0.060
-//center = 0.075
-const SERVO_MAX = 0.092
+_drive <- hardware.pin7
+ 
+_drive.configure(DIGITAL_OUT);
 
-const OVERCURRENT_THRESHOLD = 53000
+_driveOn <- false
 
-const SERVO_FORWARD = 0
-const SERVO_BACKWARD = 1
-const SERVO_STOP = 0.5
+_schedule <- {}
 
-
-// Create global variable for the pin to which the servo is connected
-// then configure the pin for PWM
- 
-servo <- hardware.pin7
-servo.configure(PWM_OUT, 0.02, SERVO_MIN)
- 
-// Alias pin 2 as pot
- 
-servoFeedback <- hardware.pin1
- 
-// Configure the pin for analog input
- 
-servoFeedback.configure(ANALOG_IN)
- 
-// Define a function to control the servo.
-// It expects a value between 0.0 and 1.0 to be passed to it
- 
-function setServo(value) 
+function feed(servings)
 {
-    local scaledValue = value * (SERVO_MAX - SERVO_MIN) + SERVO_MIN
-    servo.write(scaledValue)
-    //server.log(scaledValue)
+   server.log("feed " + servings + " servings");
+  
+   for(local i = 0; i < servings; i += 1)
+   {
+       runOnce();
+   }
 }
- 
 
-
-motorOn <- false
-// Define a function to loop through the servo position values
- 
-function sweep() 
+function setSchedule(schedule)
 {
-    if(motorOn)
-        setServo(SERVO_FORWARD)
-    else setServo(SERVO_STOP)
-  
-    local feedback = servoFeedback.read();
-    //server.log(feedback)
-    
-    if(feedback > OVERCURRENT_THRESHOLD)
-    {
-        setServo(SERVO_BACKWARD)
-        imp.sleep(0.1)
-        setServo(SERVO_FORWARD)
-    }
-    
-    imp.wakeup(1.0, sweep)
-    
-    // check time
-    //local now = date();
-    
-    //if(now.sec==0)
-    //    runOnce()
-}
- 
-// Start the ball rolling by calling the loop function
- 
-    //sweep()
-setServo(SERVO_STOP)
-
-function setMotor(motorState) {
-  server.log("Set motor: " + motorState);
-  
-  if(motorState == 1)
-  {
-     runOnce()
-  }
-  else motorOn = false;
+   server.log("set schedule: " + schedule);
+   _schedule = schedule;
 }
 
 function runOnce()
 {
-     motorOn = true;
-     imp.wakeup(3.0, stop)
+    _driveOn = true;
+    imp.wakeup(3.0, stop);
 }
 
 function stop()
 {
-    motorOn = false;
+    _driveOn = false;
 }
  
-sweep();
-     
-// register a handler for "led" messages from the agent
-agent.on("motor", setMotor);
+function loop()
+{
+    if(_driveOn)
+        _drive.write(1);
+    else _drive.write(0);
+    
+    imp.wakeup(1.0, loop)
+}
+
+loop();
+ 
+agent.on("feed", feed);
+agent.on("schedule", setSchedule);
+
+agent.on("feed", feed);
