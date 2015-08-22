@@ -7,6 +7,7 @@ namespace KittyFeeder
 	{
 		Task Feed();
 		Task SetSchedule (ScheduleModel schedule);
+		Task<ScheduleModel> GetSchedule ();
 	}
 }
 

@@ -109,6 +109,7 @@
     <Compile Include="Models\DailyScheduleEntryModelBase.cs" />
     <Compile Include="Controls\BindablePicker.cs" />
     <Compile Include="Converters\DayOfWeekConverter.cs" />
+    <Compile Include="NotifyTaskCompletion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
