@@ -57,16 +57,16 @@ namespace KittyFeeder
 		{
 			// Create an HTTP web request using the URL:
 			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create (new Uri (url));
+			request.ContentType = "text/json";
 			request.Method = "GET";
 
 			using (var response = await request.GetResponseAsync ()) 
 			{
 				using (var stream = response.GetResponseStream())
 				using (var reader = new StreamReader (stream))
-				using (var jsonTextReader = new JsonTextReader (reader)) 
 				{
-					JsonSerializer serializer = new JsonSerializer ();
-					return (T)serializer.Deserialize (jsonTextReader);
+					var value = reader.ReadToEnd ();
+					return (T)JsonConvert.DeserializeObject (value, typeof(T), new ScheduleEntryJsonConverter ());
 				}
 			}
 		}

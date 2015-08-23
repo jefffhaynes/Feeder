@@ -110,6 +110,7 @@
     <Compile Include="Controls\BindablePicker.cs" />
     <Compile Include="Converters\DayOfWeekConverter.cs" />
     <Compile Include="NotifyTaskCompletion.cs" />
+    <Compile Include="ScheduleEntryJsonConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />

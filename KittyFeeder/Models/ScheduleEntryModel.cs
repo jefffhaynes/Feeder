@@ -3,8 +3,10 @@ using Newtonsoft.Json;
 
 namespace KittyFeeder
 {
-	public abstract class ScheduleEntryModel
+	public class ScheduleEntryModel
 	{
+		public ScheduleEntryModel(){}
+
 		protected ScheduleEntryModel(ScheduleEntryType type)
 		{
 			Type = type;

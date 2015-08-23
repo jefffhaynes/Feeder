@@ -21,6 +21,7 @@ namespace KittyFeeder
 		public double UnixTime
 		{
 			get { return GetUnixTimestamp (DateTime); }
+			set{ }
 		}
 
 		private double GetUnixTimestamp(DateTime dateTime)

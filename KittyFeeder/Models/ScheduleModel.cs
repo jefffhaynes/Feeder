@@ -18,6 +18,7 @@ namespace KittyFeeder
 		public double UtcOffset 
 		{
 			get { return TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).TotalSeconds; }
+			set{ }
 		}
 	}
 }

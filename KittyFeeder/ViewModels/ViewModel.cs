@@ -12,7 +12,8 @@ namespace KittyFeeder
 	public class ViewModel : INotifyPropertyChanged
 	{
 		private IFeeder _feeder;
-		ObservableCollection<ScheduleEntryViewModel> _schedule;
+		private ICommand _addMealCommand;
+		private ICommand _commitScheduleCommand;
 
 		public ViewModel (IFeeder feeder)
 		{
@@ -20,20 +21,48 @@ namespace KittyFeeder
 
 			ScheduleEntries = new NotifyTaskCompletion<ObservableCollection<ScheduleEntryViewModel>> (GetSchedule ());
 
+			ScheduleEntries.PropertyChanged += (object sender, PropertyChangedEventArgs e) => 
+			{
+				if(e.PropertyName == "Result")
+				{
+					AddMealCommand = new RelayCommand (o => {
+						ScheduleEntries.Result.Add (new ScheduleEntryViewModel ());
+					});
+	
+					CommitScheduleCommand = new RelayCommand (async o => await SetSchedule (ScheduleEntries.Result));
+				}
+			};
+
 			RunCommand = new RelayCommand (o => _feeder.Feed ());
-
-			AddMealCommand = new RelayCommand (o => {
-				ScheduleEntries.Result.Add (new ScheduleEntryViewModel ());
-			});
-
-			CommitScheduleCommand = new RelayCommand (async o => await SetSchedule (ScheduleEntries.Result));
 		}
 
 		public ICommand RunCommand { get; set; }
 
-		public ICommand AddMealCommand { get; set; }
+		public ICommand AddMealCommand 
+		{
+			get { return _addMealCommand; }
+			set
+			{
+				if(_addMealCommand != value)
+				{
+					_addMealCommand = value;
+					OnPropertyChanged ("AddMealCommand");
+				}
+			}
+		}
 
-		public ICommand CommitScheduleCommand { get; set; }
+		public ICommand CommitScheduleCommand
+		{
+			get { return _commitScheduleCommand; }
+			set
+			{
+				if(_commitScheduleCommand != value)
+				{
+					_commitScheduleCommand = value;
+					OnPropertyChanged ("CommitScheduleCommand");
+				}
+			}
+		}
 
 		public NotifyTaskCompletion<ObservableCollection<ScheduleEntryViewModel>> ScheduleEntries { get; private set; }
 
@@ -46,7 +75,7 @@ namespace KittyFeeder
 		private async Task<ObservableCollection<ScheduleEntryViewModel>> GetSchedule()
 		{
 			var schedule = await _feeder.GetSchedule ();
-			var convertedSchedule = schedule.Entries.OfType<WeeklyScheduleEntryModel> ()
+			var convertedSchedule = schedule.Entries.Cast<WeeklyScheduleEntryModel> ()
 				.Select (entry => new ScheduleEntryViewModel (Convert (entry.DayOfWeek), entry.Time)).ToList ();
 			return new ObservableCollection<ScheduleEntryViewModel> (convertedSchedule);
 		}

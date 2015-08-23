@@ -21,6 +21,7 @@ namespace KittyFeeder
 		public double TimeOfDay
 		{
 			get { return Time.TotalSeconds; }
+			set{ }
 		}
 	}
 }
